@@ -1,0 +1,49 @@
+﻿@model CMCS.Web.Models.NewClaimVm
+@{
+    ViewData["Title"] = "Claim Details";
+}
+<h2 class="mb-3">Claim Details</h2>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <label class="form-label">Lecturer</label>
+    <input class="form-control" value="@Model.LecturerName" readonly />
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Month</label>
+    <input class="form-control" value="@Model.MonthLabel" readonly />
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Status</label>
+    <input class="form-control" value="@Model.Status" readonly />
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-header fw-semibold">Items</div>
+  <div class="card-body p-0">
+    <table class="table table-sm table-striped mb-0">
+      <thead class="table-light">
+        <tr><th>Date</th><th>Hours</th><th>Activity</th><th>Rate</th><th>Line Total</th></tr>
+      </thead>
+      <tbody>
+                @foreach (var item in Model.Items)
+                {
+              <tr>
+                <td>@item.WorkDate:yyyy-MM-dd</td>
+                <td>@item.Hours</td>
+                <td>@item.Activity</td>
+                <td>@item.HourlyRate</td>
+                <td>@item.LineTotal</td>
+              </tr>
+                }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mt-3">
+  <button class="btn btn-outline-secondary" disabled>Edit</button>
+  <button class="btn btn-outline-danger" disabled>Delete</button>
+</div>
+<p class="text-muted small mt-2">Edit/Delete disabled in prototype.</p>

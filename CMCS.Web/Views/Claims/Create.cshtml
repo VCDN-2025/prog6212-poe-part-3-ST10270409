@@ -1,0 +1,128 @@
+﻿@model CMCS.Web.Models.CreateClaimVm
+
+@{
+    ViewData["Title"] = "Create Claim";
+}
+
+<h2>Create Claim</h2>
+
+<form asp-action="Create" method="post" class="row g-3" id="claimForm">
+    <div class="col-md-4">
+        <label asp-for="Date" class="form-label"></label>
+        <input asp-for="Date" class="form-control" type="date" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="HoursWorked" class="form-label"></label>
+        <input asp-for="HoursWorked" class="form-control" id="hoursInput"
+               min="0.5" max="24" step="0.5" />
+        <span asp-validation-for="HoursWorked" class="text-danger"></span>
+        <small class="form-text text-muted">Must be between 0.5 and 24 hours</small>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="HourlyRate" class="form-label"></label>
+        <input asp-for="HourlyRate" class="form-control" id="rateInput" readonly />
+        <span asp-validation-for="HourlyRate" class="text-danger"></span>
+        <small class="form-text text-muted">Set by HR - cannot be modified</small>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control" rows="3"
+                  placeholder="Optional notes about this claim..."></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label fw-bold">Calculated Total (R)</label>
+        <input id="totalDisplay" class="form-control fs-5 fw-bold text-success" readonly />
+        <small class="form-text text-muted">Automatically calculated: Hours × Rate</small>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title">Validation Summary</h6>
+                <div id="validationMessages" class="small">
+                    <div id="hoursValidation" class="text-warning">✓ Enter hours worked</div>
+                    <div id="rateValidation" class="text-success">✓ Hourly rate loaded from HR</div>
+                    <div id="totalValidation" class="text-warning">✓ Total will be calculated</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-primary" id="submitBtn">Submit Claim</button>
+        <a asp-action="My" class="btn btn-outline-secondary">Back to My Claims</a>
+        <button type="button" class="btn btn-outline-info" onclick="recalc()">Recalculate</button>
+    </div>
+
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const hoursInput = document.getElementById('hoursInput');
+        const rateInput = document.getElementById('rateInput');
+        const totalDisplay = document.getElementById('totalDisplay');
+        const hoursValidation = document.getElementById('hoursValidation');
+        const totalValidation = document.getElementById('totalValidation');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function recalc() {
+            const h = parseFloat(hoursInput.value);
+            const r = parseFloat(rateInput.value);
+
+            // Hours validation
+            if (isNaN(h) || h < 0.5 || h > 24) {
+                hoursValidation.className = 'text-danger';
+                hoursValidation.innerHTML = '❌ Hours must be between 0.5 and 24';
+                totalDisplay.value = '';
+                submitBtn.disabled = true;
+                return;
+            } else {
+                hoursValidation.className = 'text-success';
+                hoursValidation.innerHTML = '✓ Hours valid';
+            }
+
+            // Calculate total
+            if (!isNaN(h) && !isNaN(r) && h > 0 && r > 0) {
+                const total = (h * r).toFixed(2);
+                totalDisplay.value = 'R ' + total;
+                totalValidation.className = 'text-success';
+                totalValidation.innerHTML = '✓ Total calculated: R ' + total;
+                submitBtn.disabled = false;
+            } else {
+                totalDisplay.value = '';
+                totalValidation.className = 'text-warning';
+                totalValidation.innerHTML = '✓ Enter hours to calculate total';
+                submitBtn.disabled = true;
+            }
+        }
+
+        function validateForm() {
+            const h = parseFloat(hoursInput.value);
+            if (isNaN(h) || h < 0.5 || h > 24) {
+                alert('Please enter valid hours between 0.5 and 24');
+                return false;
+            }
+            return true;
+        }
+
+        hoursInput.addEventListener('input', recalc);
+        hoursInput.addEventListener('blur', recalc);
+
+        document.getElementById('claimForm').addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+            }
+        });
+
+        // Initial calculation
+        recalc();
+    </script>
+}
