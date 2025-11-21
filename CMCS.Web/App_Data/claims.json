@@ -1,0 +1,104 @@
+[
+  {
+    "Id": "6c663ac3-9381-4f48-b2fb-6e977db8b5f3",
+    "Date": "2025-10-22T00:00:00",
+    "HoursWorked": 9,
+    "HourlyRate": 120.00,
+    "Notes": "pay the ou",
+    "Total": 1080.00,
+    "Status": 2,
+    "Documents": [
+      {
+        "Id": "783a22ba-dee6-4838-8a76-a9b6d8bdb03d",
+        "OriginalFileName": "PROG6212 Part 2 Checklist 2.pdf",
+        "StoredFileName": "d192929e303f4d01b3df9090effa0aac.bin",
+        "SizeBytes": 118192,
+        "UploadedAt": "2025-10-21T23:29:23.4197344Z"
+      }
+    ]
+  },
+  {
+    "Id": "efc2bc83-7eec-42d5-9609-ce70cb510540",
+    "Date": "2025-10-21T00:00:00",
+    "HoursWorked": 12,
+    "HourlyRate": 140,
+    "Notes": "pay me",
+    "Total": 1680,
+    "Status": 2,
+    "Documents": [
+      {
+        "Id": "bf2e1279-cfe7-4fb7-b156-3bcf1e4b5d40",
+        "OriginalFileName": "INSY6212 Assignment 2 PDF.pdf",
+        "StoredFileName": "fe4e7e0a069a45c395c6dbc77d8eadeb.bin",
+        "SizeBytes": 343194,
+        "UploadedAt": "2025-10-21T21:31:51.0826877Z"
+      }
+    ]
+  },
+  {
+    "Id": "a9beac79-295c-4603-9ccb-428bab6099c6",
+    "Date": "2025-10-21T00:00:00",
+    "HoursWorked": 15,
+    "HourlyRate": 190,
+    "Notes": "pay this man",
+    "Total": 2850,
+    "Status": 3,
+    "Documents": [
+      {
+        "Id": "7f005d7e-98c7-426d-a221-5762de9936bf",
+        "OriginalFileName": "Peer Evaluation.docx",
+        "StoredFileName": "c66afb31b4a24af880dd219a6b0961ac.bin",
+        "SizeBytes": 15559,
+        "UploadedAt": "2025-10-21T21:41:10.8814959Z"
+      }
+    ]
+  },
+  {
+    "Id": "d2aa8a0c-2d39-4e08-9a09-71e40f851248",
+    "Date": "2025-10-21T00:00:00",
+    "HoursWorked": 8,
+    "HourlyRate": 400.00,
+    "Notes": "This man is rich",
+    "Total": 3200.00,
+    "Status": 3,
+    "Documents": []
+  },
+  {
+    "Id": "ce72d26d-6f4e-4482-be60-f3c0cfbd8bb7",
+    "Date": "2025-10-01T00:00:00",
+    "HoursWorked": 8,
+    "HourlyRate": 500.00,
+    "Notes": "Tire",
+    "Total": 4000.00,
+    "Status": 2,
+    "Documents": [
+      {
+        "Id": "0c404a5b-de06-42ec-b745-8c9d0e96bca5",
+        "OriginalFileName": "HealthHub_WBS_Squares.pdf",
+        "StoredFileName": "c8b6dbe427b64d1ebb5eb21eb756e215.bin",
+        "SizeBytes": 19984,
+        "UploadedAt": "2025-10-18T14:20:32.8162222Z"
+      }
+    ]
+  },
+  {
+    "Id": "92623a81-7848-4fe1-b689-55e49f454f71",
+    "Date": "2018-11-22T00:00:00",
+    "HoursWorked": 8,
+    "HourlyRate": 130.00,
+    "Notes": "fifa 19",
+    "Total": 1040.00,
+    "Status": 3,
+    "Documents": []
+  },
+  {
+    "Id": "4bb95905-df3e-4873-86ca-5f794a40c0bb",
+    "Date": "2011-10-22T00:00:00",
+    "HoursWorked": 10,
+    "HourlyRate": 110.00,
+    "Notes": "fifa",
+    "Total": 1100.00,
+    "Status": 3,
+    "Documents": []
+  }
+]

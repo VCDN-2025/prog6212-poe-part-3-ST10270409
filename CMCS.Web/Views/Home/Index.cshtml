@@ -1,0 +1,50 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Home";
+}
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Lecturer</h5>
+                <p class="card-text mb-2">Create a claim, upload supporting documents, and track status.</p>
+                <a class="btn btn-primary me-2" asp-controller="Claims" asp-action="Create">Create Claim</a>
+                <a class="btn btn-outline-secondary" asp-controller="Claims" asp-action="My">My Claims</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Programme Coordinator</h5>
+                <p class="card-text mb-2">Review <b>Pending</b> claims and verify or reject.</p>
+                <a class="btn btn-info text-white" asp-controller="Coordinator" asp-action="Index">Open Coordinator View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Academic Manager</h5>
+                <p class="card-text mb-2">Approve or reject claims that have been verified by a coordinator.</p>
+                <a class="btn btn-success" asp-controller="Manager" asp-action="Index">Open Manager View</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">About this Build</h5>
+                <ul class="mb-3">
+                    <li>Claims stored in <code>App_Data/claims.json</code></li>
+                    <li>Uploads encrypted in <code>wwwroot/uploads</code></li>
+                    <li>Allowed files: <code>.pdf .docx .xlsx</code> (≤ 2 MB)</li>
+                </ul>
+                <a class="btn btn-outline-dark" asp-controller="Home" asp-action="Index">Refresh</a>
+            </div>
+        </div>
+    </div>
+</div>

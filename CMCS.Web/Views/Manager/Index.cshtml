@@ -1,0 +1,59 @@
+﻿@model List<CMCS.Web.Models.Claim>
+@{
+    ViewData["Title"] = "Manager – Verified Claims";
+}
+<h2>Manager – Verified Claims</h2>
+<partial name="_Alerts" />
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">No verified claims to approve yet.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Hours</th>
+                <th>Total (R)</th>
+                <th>Docs</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.Date:yyyy-MM-dd</td>
+                    <td>@c.HoursWorked</td>
+                    <td>@c.Total.ToString("F2")</td>
+                    <td>
+                        @foreach (var d in c.Documents)
+                        {
+                            <div>
+                                <a asp-controller="Claims" asp-action="Download"
+                                   asp-route-claimId="@c.Id" asp-route-docId="@d.Id">
+                                    @d.OriginalFileName
+                                </a>
+                                (@Math.Round(d.SizeBytes / 1024.0, 1) KB)
+                            </div>
+                        }
+                    </td>
+                    <td class="d-flex gap-2">
+                        <form asp-action="Approve" method="post">
+                            <input type="hidden" name="id" value="@c.Id" />
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-success">Approve</button>
+                        </form>
+                        <form asp-action="Reject" method="post">
+                            <input type="hidden" name="id" value="@c.Id" />
+                            @Html.AntiForgeryToken()
+                            <button class="btn btn-sm btn-danger">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

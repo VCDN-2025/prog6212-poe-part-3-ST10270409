@@ -1,0 +1,105 @@
+﻿@model List<CMCS.Web.Models.Claim>
+@using CMCS.Web.Models
+
+@{
+    ViewData["Title"] = "HR Claims Report";
+
+    ClaimStatus? selectedStatus = ViewBag.FilterStatus;
+    string from = ViewBag.From as string ?? "";
+    string to = ViewBag.To as string ?? "";
+    decimal? minTotal = ViewBag.MinTotal;
+    decimal? maxTotal = ViewBag.MaxTotal;
+    decimal totalApproved = ViewBag.TotalApproved ?? 0m;
+}
+
+<h2 class="mb-3">HR Claims Report</h2>
+
+<form method="get" class="row g-3 mb-3">
+    <div class="col-md-2">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+            <option value="">All</option>
+            @foreach (ClaimStatus s in Enum.GetValues(typeof(ClaimStatus)))
+            {
+                bool isSelected = selectedStatus.HasValue && selectedStatus.Value == s;
+                <option value="@((int)s)" selected="@(isSelected ? "selected" : "")">
+                    @s
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">From date</label>
+        <input type="date" name="from" value="@from" class="form-control" />
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">To date</label>
+        <input type="date" name="to" value="@to" class="form-control" />
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Min total (R)</label>
+        <input type="number" step="0.01" name="minTotal" value="@(minTotal?.ToString("0.00"))" class="form-control" />
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Max total (R)</label>
+        <input type="number" step="0.01" name="maxTotal" value="@(maxTotal?.ToString("0.00"))" class="form-control" />
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end gap-2">
+        <button class="btn btn-primary flex-grow-1">Apply</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+    </div>
+</form>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <div>
+        <strong>Total approved (filtered):</strong>
+        R @totalApproved.ToString("N2")
+    </div>
+    <div>
+        <a asp-action="ExportCsv"
+           asp-route-status="@(selectedStatus.HasValue ? (int?)selectedStatus.Value : null)"
+           asp-route-from="@from"
+           asp-route-to="@to"
+           asp-route-minTotal="@minTotal"
+           asp-route-maxTotal="@maxTotal"
+           class="btn btn-outline-success btn-sm">
+            Export CSV
+        </a>
+    </div>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">No claims match the selected filters.</div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Hours</th>
+                <th>Rate</th>
+                <th>Total (R)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.Date:yyyy-MM-dd</td>
+                    <td>@c.HoursWorked</td>
+                    <td>@c.HourlyRate.ToString("F2")</td>
+                    <td>@c.Total.ToString("F2")</td>
+                    <td>@c.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
