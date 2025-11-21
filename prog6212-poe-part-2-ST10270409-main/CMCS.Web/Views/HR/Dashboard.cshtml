@@ -1,0 +1,79 @@
+﻿@model HrDashboardVm
+@{
+    ViewData["Title"] = "HR Dashboard";
+}
+
+<div class="container py-4">
+
+    <h2 class="fw-bold mb-4">HR Dashboard</h2>
+
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-white bg-primary rounded-3">
+                <div class="card-body">
+                    <h6>Total Payments</h6>
+                    <h3>R @Model.TotalPayments.ToString("N2")</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-dark bg-warning rounded-3">
+                <div class="card-body">
+                    <h6>Pending Claims</h6>
+                    <h3>@Model.PendingClaims</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-white bg-info rounded-3">
+                <div class="card-body">
+                    <h6>Verified Claims</h6>
+                    <h3>@Model.VerifiedClaims</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 text-white bg-success rounded-3">
+                <div class="card-body">
+                    <h6>Total Lecturers</h6>
+                    <h3>@Model.TotalLecturers</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mt-4 mb-3">Recent Claims</h4>
+
+    @if (!Model.RecentClaims.Any())
+    {
+        <div class="alert alert-info">No claims found.</div>
+    }
+    else
+    {
+        <table class="table table-hover mb-5">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Lecturer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.RecentClaims)
+                {
+                    <tr>
+                        <td>@c.Date.ToString("yyyy-MM-dd")</td>
+                        <td>@c.LecturerName</td>
+                        <td>R @c.Total.ToString("N2")</td>
+                        <td>@c.Status</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

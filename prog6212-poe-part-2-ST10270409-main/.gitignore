@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+*.user
+*.log
+*.tmp
+# Encrypted uploads folder (keep an empty placeholder)
+CMCS.Web/wwwroot/uploads/*
+!CMCS.Web/wwwroot/uploads/.gitkeep
+# Local data backups
+CMCS.Web/App_Data/*.bak

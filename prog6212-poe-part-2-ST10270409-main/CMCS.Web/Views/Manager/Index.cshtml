@@ -1,0 +1,138 @@
+﻿@model List<CMCS.Web.Models.Claim>
+
+@using CMCS.Web.Models
+
+@{
+    ViewData["Title"] = "Manager - Verified Claims";
+
+    string Badge(ClaimStatus s) => s switch
+    {
+        ClaimStatus.Pending => "badge bg-warning text-dark",
+        ClaimStatus.VerifiedByCoordinator => "badge bg-info text-dark",
+        ClaimStatus.ApprovedByManager => "badge bg-success",
+        ClaimStatus.Rejected => "badge bg-danger",
+        _ => "badge bg-secondary"
+    };
+
+    string StatusLabel(ClaimStatus s) => s switch
+    {
+        ClaimStatus.Pending => "Pending",
+        ClaimStatus.VerifiedByCoordinator => "Verified by Coordinator",
+        ClaimStatus.ApprovedByManager => "Approved by Manager",
+        ClaimStatus.Rejected => "Rejected",
+        _ => "Unknown"
+    };
+
+    int ProgressForStatus(ClaimStatus s) => s switch
+    {
+        ClaimStatus.Pending => 33,
+        ClaimStatus.VerifiedByCoordinator => 66,
+        ClaimStatus.ApprovedByManager => 100,
+        _ => 0
+    };
+}
+
+<h2 class="mb-3">Manager – Final Approval</h2>
+
+<p class="text-muted">
+    As Academic Manager, you perform the final approval step
+    after the Programme Coordinator has verified each claim.
+    High-value claims trigger automated warnings before approval.
+</p>
+
+<partial name="_Alerts" />
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        There are currently no verified claims awaiting manager approval.
+    </div>
+}
+else
+{
+    <div class="card shadow-sm mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Verified Claims (@Model.Count)</span>
+            <span class="small text-muted">
+                These claims have already been verified by the Coordinator and are awaiting your final decision.
+            </span>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Lecturer</th>
+                        <th class="text-end">Hours</th>
+                        <th class="text-end">Rate (R)</th>
+                        <th class="text-end">Total (R)</th>
+                        <th>Status</th>
+                        <th style="width: 160px;">Progress</th>
+                        <th class="text-center" style="width: 210px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        var progress = ProgressForStatus(c.Status);
+                        <tr>
+                            <td>@c.Date.ToString("dd MMM yyyy")</td>
+                            <td>
+                                <div class="fw-semibold">@c.LecturerName</div>
+                                <div class="small text-muted">@c.LecturerId</div>
+                            </td>
+                            <td class="text-end">@c.HoursWorked.ToString("0.#")</td>
+                            <td class="text-end">@c.HourlyRate.ToString("0.00")</td>
+                            <td class="text-end fw-semibold">@c.Total.ToString("0.00")</td>
+                            <td>
+                                <span class="@Badge(c.Status)">
+                                    @StatusLabel(c.Status)
+                                </span>
+                            </td>
+                            <td>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar"
+                                         role="progressbar"
+                                         style="width:@progress%"
+                                         aria-valuenow="@progress"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <div class="small text-muted mt-1">@progress% complete</div>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <form asp-action="Approve" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@c.Id" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="btn btn-success"
+                                                title="Approve this claim for payment">
+                                            Approve
+                                        </button>
+                                    </form>
+
+                                    <form asp-action="Reject" method="post" class="d-inline ms-1">
+                                        <input type="hidden" name="id" value="@c.Id" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="btn btn-outline-danger"
+                                                onclick="return confirm('Reject this claim?');"
+                                                title="Reject this claim">
+                                            Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer small text-muted">
+            Final approval automation: high-value claims (over R50,000) trigger warnings,
+            and claim status is updated to <strong>ApprovedByManager</strong> or <strong>Rejected</strong>.
+        </div>
+    </div>
+}

@@ -1,0 +1,113 @@
+﻿@model List<CMCS.Web.Models.Claim>
+
+@using CMCS.Web.Models
+
+@{
+    ViewData["Title"] = "Coordinator - Pending Claims";
+
+    string Badge(ClaimStatus s) => s switch
+    {
+        ClaimStatus.Pending => "badge bg-warning text-dark",
+        ClaimStatus.VerifiedByCoordinator => "badge bg-info text-dark",
+        ClaimStatus.ApprovedByManager => "badge bg-success",
+        _ => "badge bg-danger"
+    };
+
+    string StatusLabel(ClaimStatus s) => s switch
+    {
+        ClaimStatus.Pending => "Pending (Awaiting Validation)",
+        ClaimStatus.VerifiedByCoordinator => "Verified by Coordinator",
+        ClaimStatus.ApprovedByManager => "Approved by Manager",
+        ClaimStatus.Rejected => "Rejected",
+        _ => "Unknown"
+    };
+}
+
+<h2 class="mb-3">Coordinator – Pending Claims</h2>
+
+<p class="text-muted">
+    As Programme Coordinator, you review and validate submitted claims before they move on to the Academic Manager.
+    Automated business rules check hours, rates and maximum totals before verification.
+</p>
+
+<partial name="_Alerts" />
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        There are currently no pending claims to review.
+    </div>
+}
+else
+{
+    <div class="card shadow-sm mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">Pending Claims (@Model.Count)</span>
+            <span class="text-muted small">
+                Only claims with status <strong>Pending</strong> are shown here.
+            </span>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Lecturer</th>
+                        <th class="text-end">Hours</th>
+                        <th class="text-end">Rate (R)</th>
+                        <th class="text-end">Total (R)</th>
+                        <th>Status</th>
+                        <th class="text-center" style="width: 210px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td>@c.Date.ToString("dd MMM yyyy")</td>
+                            <td>
+                                <div class="fw-semibold">@c.LecturerName</div>
+                                <div class="small text-muted">@c.LecturerId</div>
+                            </td>
+                            <td class="text-end">@c.HoursWorked.ToString("0.#")</td>
+                            <td class="text-end">@c.HourlyRate.ToString("0.00")</td>
+                            <td class="text-end fw-semibold">@c.Total.ToString("0.00")</td>
+                            <td>
+                                <span class="@Badge(c.Status)">
+                                    @StatusLabel(c.Status)
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <form asp-action="Verify" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@c.Id" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="btn btn-success"
+                                                title="Run automated validation and mark as verified">
+                                            Verify
+                                        </button>
+                                    </form>
+                                    <form asp-action="Reject" method="post" class="d-inline ms-1">
+                                        <input type="hidden" name="id" value="@c.Id" />
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="btn btn-outline-danger"
+                                                onclick="return confirm('Reject this claim?');"
+                                                title="Reject this claim">
+                                            Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer small text-muted">
+            Verification automatically applies business rules:
+            hours between 0.5–24, hourly rate between R50–R5000, and a maximum claim amount of R100,000.
+        </div>
+    </div>
+}

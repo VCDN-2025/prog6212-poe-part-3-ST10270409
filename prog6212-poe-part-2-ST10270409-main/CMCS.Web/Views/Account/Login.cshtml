@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow-lg" style="width: 450px;">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="m-0">Login to CMCS</h3>
+        </div>
+
+        <div class="card-body p-4">
+
+            @if (TempData["err"] != null)
+            {
+                <div class="alert alert-danger">@TempData["err"]</div>
+            }
+            @if (TempData["ok"] != null)
+            {
+                <div class="alert alert-success">@TempData["ok"]</div>
+            }
+
+            <form method="post" asp-action="Login">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Email Address</label>
+                    <input type="email" name="email" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Password</label>
+                    <input type="password" name="password" class="form-control" required />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
+            </form>
+        </div>
+    </div>
+</div>

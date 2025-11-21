@@ -1,0 +1,181 @@
+﻿@model List<CMCS.Web.Models.Claim>
+@using CMCS.Web.Models;
+
+@{
+    /* HR & Manager Claims Report
+    In-text reference: (Microsoft, 2024) — Razor Pages formatting in ASP.NET Core.
+            */
+
+    ViewData["Title"] = "HR / Manager – Claims Report";
+
+    // Safe reads from ViewBag
+    ClaimStatus? selectedStatus =
+        ViewBag.FilterStatus is ClaimStatus cs ? cs : (ClaimStatus?)null;
+
+    string from = ViewBag.From as string ?? string.Empty;
+    string to = ViewBag.To as string ?? string.Empty;
+    decimal? minTotal = ViewBag.MinTotal as decimal?;
+    decimal? maxTotal = ViewBag.MaxTotal as decimal?;
+
+    string Badge(ClaimStatus s) => s switch
+    {
+        ClaimStatus.Pending => "badge bg-warning text-dark",
+        ClaimStatus.VerifiedByCoordinator => "badge bg-info text-dark",
+        ClaimStatus.ApprovedByManager => "badge bg-success",
+        ClaimStatus.Rejected => "badge bg-danger",
+        _ => "badge bg-secondary"
+    };
+
+    decimal totalInView = (Model?.Sum(c => c.Total) ?? 0m);
+    decimal approvedInView = ViewBag.TotalApproved is decimal ta ? ta : 0m;
+}
+
+<div class="container py-4">
+
+    <h2 class="fw-bold mb-2">Claims Report</h2>
+    <p class="text-muted mb-4">
+        HR and Managers can filter, view, and analyse monthly claims.
+        (Microsoft, 2024) describes this filtering approach using <code>ViewBag</code> and LINQ for dynamic views.
+    </p>
+
+    <!-- FILTER CARD -->
+    <div class="card shadow-sm mb-4 border-0 rounded-3">
+        <div class="card-body">
+
+            <form method="get" class="row g-3">
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All</option>
+                        @foreach (ClaimStatus s in Enum.GetValues(typeof(ClaimStatus)))
+                        {
+                            <option value="@s" selected="@(selectedStatus == s ? "selected" : null)">
+                                @s
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">From date</label>
+                    <input type="date" class="form-control" name="from" value="@from" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">To date</label>
+                    <input type="date" class="form-control" name="to" value="@to" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Minimum total (R)</label>
+                    <input type="number" class="form-control" step="0.01" name="minTotal" value="@(minTotal?.ToString() ?? "")" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Maximum total (R)</label>
+                    <input type="number" class="form-control" step="0.01" name="maxTotal" value="@(maxTotal?.ToString() ?? "")" />
+                </div>
+
+                <div class="col-md-12 text-end">
+                    <button class="btn btn-primary px-4 me-2">
+                        <i class="bi bi-funnel"></i> Apply Filters
+                    </button>
+                    <a href="/Reports" class="btn btn-outline-secondary px-4">
+                        Reset
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- SUMMARY ROW -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Value of Claims (Current View)</h6>
+                    <h3 class="fw-bold">R @totalInView.ToString("N2")</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Approved by Manager</h6>
+                    <h3 class="fw-bold text-success">R @approvedInView.ToString("N2")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CLAIMS TABLE -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body">
+
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Lecturer</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Documents</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No claims found for the selected filters.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.OrderByDescending(x => x.Date))
+                        {
+                            <tr>
+                                <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                                <td>@item.LecturerName</td>
+                                <td>R @item.Total.ToString("N2")</td>
+                                <td>
+                                    <span class="@Badge(item.Status)">@item.Status</span>
+                                </td>
+                                <td>
+                                    @if (item.Documents != null && item.Documents.Any())
+                                    {
+                                        foreach (var doc in item.Documents)
+                                        {
+                                            <a class="btn btn-sm btn-outline-primary me-1"
+                                               href="/Claims/Download?claimId=@item.Id&docId=@doc.Id">
+                                                Download
+                                            </a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No files</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a href="/Claims/Details/@item.Id" class="btn btn-sm btn-outline-primary">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
