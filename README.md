@@ -1,32 +1,15 @@
-# CMCS — Contract Monthly Claim System (POE Part 1)
+# CMCS — Contract Monthly Claim System 
 
-Non-functional **ASP.NET Core MVC (.NET 8)** prototype for PROG6212.
+Project name & short description
 
-## How to run
-1. Open `CMCS.Web.sln` in Visual Studio 2022.
-2. Set **CMCS.Web** as Startup project.
-3. Press **F5** and navigate:
-   - `/` — Dashboard
-   - `/Claims/New`
-   - `/Claims/My`
-   - `/Approvals`
+How to run (open solution, set CMCS.Web as startup, update connection string, run migrations if needed)
 
-## Screens (Part 1)
-- New Claim: capture items (date, hours, activity, rate) with actions disabled.
-- My Claims: month, total hours, amount, status badges + “Open”.
-- Approvals: list pending claims with stage and disabled Approve/Reject.
+Demo logins
 
-## Architecture
-- MVC with Bootstrap. View-models only (no DB).
-- Entities for Part 2 (UML): Lecturer, Claim, ClaimItem, Approval, Attachment.
+Lecturer: lecturer@campus.com / lecturer123
 
-## Docs
-- `docs/uml/` — UML PNG + .drawio
-- `docs/screens/` — screenshots used in the report
-- `docs/plan/` — WBS / schedule
+Coordinator: coordinator@campus.com / TempPassword123!
 
-## Scope (Part 1)
-- UI prototype only; actions are intentionally disabled.
+Manager: manager@campus.com / manager123
 
-## License
-Academic use only.
+HR: hr@campus.com / TempPassword123!
